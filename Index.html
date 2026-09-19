@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -6,9 +8,9 @@
     <title>3D Dobbelstenen</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             background-color: #2c3e50;
-            color: #fff;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -38,31 +40,24 @@
 
         select {
             background-color: #ecf0f1;
-            color: #333;
+            color: #333333;
             margin-right: 15px;
         }
 
         button {
             background-color: #e74c3c;
-            color: white;
-            transition: background 0.2s;
+            color: #ffffff;
         }
 
-        button:hover {
-            background-color: #c0392b;
-        }
-
-        /* Container voor alle dobbelstenen */
         #dice-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 40px;
             max-width: 800px;
-            perspective: 600px; /* Zorgt voor het 3D-effect */
+            perspective: 600px;
         }
 
-        /* De 3D Dobbelsteen */
         .dice {
             position: relative;
             width: 100px;
@@ -71,58 +66,31 @@
             transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Elk vlak van de dobbelsteen */
         .face {
             position: absolute;
             width: 100px;
             height: 100px;
-            background: #fff;
-            border: 2px solid #ccc;
+            background: #ffffff;
+            border: 2px solid #cccccc;
             border-radius: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 50px;
-            font-weight: bold;
-            color: #333;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 0 10px rgba(0,0,0,0.1);
+            font-size: 65px;
+            line-height: 100px;
+            color: #333333;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
             box-sizing: border-box;
+            user-select: none;
         }
 
-        /* Positionering van de 6 vlakken in de 3D ruimte */
-        .front  { transform: rotateY(0deg) translateZ(50px); }
-        .back   { transform: rotateY(180deg) translateZ(50px); }
-        .left   { transform: rotateY(-90deg) translateZ(50px); }
-        .right  { transform: rotateY(90deg) translateZ(50px); }
-        .top    { transform: rotateX(90deg) translateZ(50px); }
-        .bottom { transform: rotateX(-90deg) translateZ(50px); }
-
-        /* CSS Stippen layout per vlak */
-        .face span {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            width: 70px;
-            height: 70px;
-        }
-
-        .dot {
-            width: 14px;
-            height: 14px;
-            background-color: #333;
-            border-radius: 50%;
-            align-self: center;
-            justify-self: center;
-        }
-        
-        /* Specifieke rode stip voor de 1 (traditioneel Aziatisch/stijlvol) of gewoon zwart */
-        .front .dot { background-color: #e74c3c; width: 22px; height: 22px; }
-
-        /* Posities van stippen op de grid (1 t/m 6) */
-        .p1 { grid-area: 2 / 2; }
-        .p2 { grid-area: 1 / 1; } .p3 { grid-area: 3 / 3; }
-        .p4 { grid-area: 1 / 3; } .p5 { grid-area: 3 / 1; }
-        .p6 { grid-area: 2 / 1; } .p7 { grid-area: 2 / 3; }
+        /* Vaste 3D posities voor de vlakken */
+        .f1 { transform: rotateY(0deg) translateZ(50px); }
+        .f2 { transform: rotateY(180deg) translateZ(50px); }
+        .f3 { transform: rotateY(90deg) translateZ(50px); }
+        .f4 { transform: rotateY(-90deg) translateZ(50px); }
+        .f5 { transform: rotateX(90deg) translateZ(50px); }
+        .f6 { transform: rotateX(-90deg) translateZ(50px); }
     </style>
 </head>
 <body>
@@ -143,64 +111,56 @@
     <div id="dice-container"></div>
 
     <script>
-        // HTML templates voor de stippen op de 6 verschillende vlakken
+        // HTML voor de vlakken (Unicode karakters, geen losse afbeeldingen)
         const facesHTML = [
-            `<div class="face front"><span><div class="dot p1"></div></span></div>`, // 1
-            `<div class="face back"><span><div class="dot p2"></div><div class="dot p3"></div></span></div>`, // 2
-            `<div class="face left"><span><div class="dot p1"></div><div class="dot p2"></div><div class="dot p3"></div></span></div>`, // 3
-            `<div class="face right"><span><div class="dot p2"></div><div class="dot p3"></div><div class="dot p4"></div><div class="dot p5"></div></span></div>`, // 4
-            `<div class="face top"><span><div class="dot p1"></div><div class="dot p2"></div><div class="dot p3"></div><div class="dot p4"></div><div class="dot p5"></div></span></div>`, // 5
-            `<div class="face bottom"><span><div class="dot p2"></div><div class="dot p3"></div><div class="dot p4"></div><div class="dot p5"></div><div class="dot p6"></div><div class="dot p7"></div></span></div>` // 6
+            '<div class="face f1">&#9856;</div>', // ⚀
+            '<div class="face f2">&#9857;</div>', // ⚁
+            '<div class="face f3">&#9858;</div>', // ⚂
+            '<div class="face f4">&#9859;</div>', // ⚃
+            '<div class="face f5">&#9860;</div>', // ⚄
+            '<div class="face f6">&#9861;</div>'  // ⚅
         ];
 
-        // Rotaties die horen bij de juiste waarde bovenop (X en Y graden)
         const rotations = {
             1: { x: 0,   y: 0 },
             2: { x: 0,   y: 180 },
-            3: { x: 0,   y: 90 },
-            4: { x: 0,   y: -90 },
+            3: { x: 0,   y: -90 },
+            4: { x: 0,   y: 90 },
             5: { x: -90, y: 0 },
             6: { x: 90,  y: 0 }
         };
 
-        // Maak het gekozen aantal dobbelstenen aan op het scherm
         function createDice() {
             const container = document.getElementById('dice-container');
-            const count = parseInt(document.getElementById('dice-count').value);
+            const count = parseInt(document.getElementById('dice-count').value, 10);
             container.innerHTML = '';
 
             for (let i = 0; i < count; i++) {
                 const dice = document.createElement('div');
                 dice.className = 'dice';
-                // Voeg alle 6 vlakken toe aan de dobbelsteen
                 dice.innerHTML = facesHTML.join('');
                 container.appendChild(dice);
             }
         }
 
-        // Laat alle dobbelstenen onafhankelijk van elkaar rollen
         function rollAll() {
             const diceElements = document.querySelectorAll('.dice');
             
             diceElements.forEach(dice => {
-                // Kies een willekeurige waarde tussen 1 en 6
                 const resultaat = Math.floor(Math.random() * 6) + 1;
                 
-                // Voeg extra volledige rotaties toe (360, 720, 1080 graden) voor een wild 'rol' effect
                 const extraRondjesX = (Math.floor(Math.random() * 3) + 2) * 360;
                 const extraRondjesY = (Math.floor(Math.random() * 3) + 2) * 360;
 
                 const targetX = rotations[resultaat].x + extraRondjesX;
                 const targetY = rotations[resultaat].y + extraRondjesY;
 
-                // Pas de 3D transformatie toe
                 dice.style.transform = `rotateX(${targetX}deg) rotateY(${targetY}deg)`;
             });
         }
 
-        // Start direct met 1 dobbelsteen op het scherm bij laden pagina
+        // Start direct bij het laden van de pagina
         createDice();
     </script>
 </body>
 </html>
-
