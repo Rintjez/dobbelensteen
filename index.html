@@ -1,6 +1,5 @@
 
-
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
@@ -17,108 +16,184 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
+            padding-bottom: 120px; /* Ruimte voor de onderste balk */
+            box-sizing: border-box;
         }
 
-        .controls {
-            margin-bottom: 40px;
+        /* Grote werpknop bovenaan/midden */
+        .main-action {
+            margin-bottom: 50px;
             text-align: center;
         }
 
-        label {
-            font-size: 18px;
-            margin-right: 10px;
-        }
-
-        select, button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        select {
-            background-color: #ecf0f1;
-            color: #333333;
-            margin-right: 15px;
-        }
-
-        button {
+        .roll-btn {
             background-color: #e74c3c;
             color: #ffffff;
+            padding: 15px 40px;
+            font-size: 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
         }
 
+        .roll-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Container voor alle dobbelstenen */
         #dice-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 40px;
-            max-width: 800px;
-            perspective: 600px;
+            gap: 50px; /* Iets meer ruimte tussen de grotere dobbelstenen */
+            max-width: 900px;
+            perspective: 800px;
         }
 
+        /* De Grotere 3D Dobbelsteen (was 100px, nu 140px) */
         .dice {
             position: relative;
-            width: 100px;
-            height: 100px;
+            width: 140px;
+            height: 140px;
             transform-style: preserve-3d;
             transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .face {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 140px;
+            height: 140px;
             background: #ffffff;
-            border: 2px solid #cccccc;
-            border-radius: 15px;
+            border: 3px solid #cccccc;
+            border-radius: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 65px;
-            line-height: 100px;
+            font-size: 95px; /* Grotere oogjes */
+            line-height: 140px;
             color: #333333;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.15);
             box-sizing: border-box;
             user-select: none;
         }
 
-        /* Vaste 3D posities voor de vlakken */
-        .f1 { transform: rotateY(0deg) translateZ(50px); }
-        .f2 { transform: rotateY(180deg) translateZ(50px); }
-        .f3 { transform: rotateY(90deg) translateZ(50px); }
-        .f4 { transform: rotateY(-90deg) translateZ(50px); }
-        .f5 { transform: rotateX(90deg) translateZ(50px); }
-        .f6 { transform: rotateX(-90deg) translateZ(50px); }
+        /* Gecorrigeerde 3D posities voor de grotere 140px kubus (helft is 70px) */
+        .f1 { transform: rotateY(0deg) translateZ(70px); }
+        .f2 { transform: rotateY(180deg) translateZ(70px); }
+        .f3 { transform: rotateY(90deg) translateZ(70px); }
+        .f4 { transform: rotateY(-90deg) translateZ(70px); }
+        .f5 { transform: rotateX(90deg) translateZ(70px); }
+        .f6 { transform: rotateX(-90deg) translateZ(70px); }
+
+        /* Vaste balk onderin het scherm */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #1a252f;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+
+        /* Totaalteller styling */
+        .total-score {
+            font-size: 22px;
+            font-weight: bold;
+            background-color: #34495e;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border-left: 5px solid #2ecc71;
+        }
+
+        /* Instellingenknop onderin */
+        .settings-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Menu dat omhoog komt voor de keuze van aantallen */
+        .menu-popup {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            background-color: #ffffff;
+            color: #333333;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            z-index: 101;
+        }
+
+        .menu-popup label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .menu-popup select {
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="controls">
-        <label for="dice-count">Aantal dobbelstenen:</label>
-        <select id="dice-count" onchange="createDice()">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-        </select>
-        <button onclick="rollAll()">Rol Dobbelstenen!</button>
+    <!-- Grote Actieknop -->
+    <div class="main-action">
+        <button class="roll-btn" onclick="rollAll()">Rol Dobbelstenen!</button>
     </div>
 
+    <!-- Het speelveld met de dobbelstenen -->
     <div id="dice-container"></div>
 
+    <!-- Onderste vaste balk -->
+    <div class="bottom-bar">
+        <!-- Live Totaalteller -->
+        <div class="total-score">Totaal: <span id="score-value">0</span></div>
+        
+        <!-- Knop om aantal te kiezen -->
+        <button class="settings-btn" onclick="toggleMenu(event)">Aantal Aanpassen ⚙️</button>
+    </div>
+
+    <!-- Verborgen keuzemenu (verschijnt boven de knop) -->
+    <div id="menu-popup" class="menu-popup">
+        <label for="dice-count">Kies aantal:</label>
+        <select id="dice-count" onchange="createDice(); closeMenu();">
+            <option value="1" selected>1 Dobbelsteen</option>
+            <option value="2">2 Dobbelstenen</option>
+            <option value="3">3 Dobbelstenen</option>
+            <option value="4">4 Dobbelstenen</option>
+            <option value="5">5 Dobbelstenen</option>
+            <option value="6">6 Dobbelstenen</option>
+        </select>
+    </div>
+
     <script>
-        // HTML voor de vlakken (Unicode karakters, geen losse afbeeldingen)
         const facesHTML = [
-            '<div class="face f1">&#9856;</div>', // ⚀
-            '<div class="face f2">&#9857;</div>', // ⚁
-            '<div class="face f3">&#9858;</div>', // ⚂
-            '<div class="face f4">&#9859;</div>', // ⚃
-            '<div class="face f5">&#9860;</div>', // ⚄
-            '<div class="face f6">&#9861;</div>'  // ⚅
+            '<div class="face f1">&#9856;</div>', // 1
+            '<div class="face f2">&#9857;</div>', // 2
+            '<div class="face f3">&#9858;</div>', // 3
+            '<div class="face f4">&#9859;</div>', // 4
+            '<div class="face f5">&#9860;</div>', // 5
+            '<div class="face f6">&#9861;</div>'  // 6
         ];
 
         const rotations = {
@@ -130,24 +205,31 @@
             6: { x: 90,  y: 0 }
         };
 
+        // Houdt de actuele waarden van de dobbelstenen bij om op te tellen
+        let currentValues = [];
+
         function createDice() {
             const container = document.getElementById('dice-container');
             const count = parseInt(document.getElementById('dice-count').value, 10);
             container.innerHTML = '';
+            currentValues = [];
 
             for (let i = 0; i < count; i++) {
                 const dice = document.createElement('div');
                 dice.className = 'dice';
                 dice.innerHTML = facesHTML.join('');
                 container.appendChild(dice);
+                currentValues.push(1); // Standaard starten ze op waarde 1
             }
+            updateScore();
         }
 
         function rollAll() {
             const diceElements = document.querySelectorAll('.dice');
             
-            diceElements.forEach(dice => {
+            diceElements.forEach((dice, index) => {
                 const resultaat = Math.floor(Math.random() * 6) + 1;
+                currentValues[index] = resultaat; // Sla het resultaat op voor de teller
                 
                 const extraRondjesX = (Math.floor(Math.random() * 3) + 2) * 360;
                 const extraRondjesY = (Math.floor(Math.random() * 3) + 2) * 360;
@@ -157,9 +239,35 @@
 
                 dice.style.transform = `rotateX(${targetX}deg) rotateY(${targetY}deg)`;
             });
+
+            // Wacht tot de rol-animatie (1.5s) klaar is, en update dan pas de teller
+            setTimeout(updateScore, 1500);
         }
 
-        // Start direct bij het laden van de pagina
+        // Telt alle actieve dobbelstenen bij elkaar op
+        function updateScore() {
+            const totaal = currentValues.reduce((a, b) => a + b, 0);
+            document.getElementById('score-value').innerText = totaal;
+        }
+
+        // Menu functies
+        function toggleMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('menu-popup');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function closeMenu() {
+            document.getElementById('menu-popup').style.display = 'none';
+        }
+
+        // Sluit het menu als je ergens anders op het scherm klikt
+        document.addEventListener('click', closeMenu);
+        document.getElementById('menu-popup').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Start direct op met de eerste dobbelsteen
         createDice();
     </script>
 </body>
